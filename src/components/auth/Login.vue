@@ -150,12 +150,12 @@ export default {
     },
 
     nameRules: [
-      (v) => !!v || "Name is required",
+      (v) => !!v || "用户名不能为空",
       (v) => (v && v.length <= 10) || "用户名长度需要小于10",
     ],
 
     passwordRules: [
-      (v) => !!v || "Name is required",
+      (v) => !!v || "密码不能为空",
       (v) => (v && v.length >= 6) || "密码长度需要大于等于6",
     ],
     phoneRules: [
