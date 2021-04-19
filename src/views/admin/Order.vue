@@ -3,7 +3,7 @@
     <h1>订单管理</h1>
     <v-data-table
       :headers="headers"
-      :items="goods"
+      :items="orders"
       :search="search"
       sort-by="price"
       class="elevation-1"
@@ -68,7 +68,7 @@
                     <v-col cols="12" sm="3">
                       <v-select
                         v-model="editedItem.category"
-                        :items="$store.state.goods.category"
+                        :items="$store.state.orders.category"
                         item-text="name"
                         item-value="id"
                         label="商品分类"
@@ -166,7 +166,7 @@ export default {
       { text: "是否上架", value: "state", sortable: false },
       { text: "操作", value: "actions", sortable: false },
     ],
-    goods: [],
+    orders: [],
     editedIndex: -1,
     editedItem: {
       gid: null,
@@ -211,18 +211,19 @@ export default {
 
   created() {
     this.getOrdersByAll();
+    this.initialize();
   },
 
   methods: {
     getOrdersByAll() {
       this.$axios
-        .get("/goods")
+        .get("/orders")
         .then((response) => {
           let that = this;
           if (response.data.code == 200) {
             that.loading=false;
-            let goods = response.data.data;
-            that.goods = goods;
+            let orders = response.data.data;
+            that.orders = orders;
           }
         })
         .catch((failResponse) => {
@@ -230,7 +231,7 @@ export default {
         });
     },
     initialize() {
-      this.goods = [
+      this.orders = [
         {
           gid: 1,
           gname: "Frozen Yogurt",
@@ -259,19 +260,19 @@ export default {
     },
 
     editItem(item) {
-      this.editedIndex = this.goods.indexOf(item);
+      this.editedIndex = this.orders.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.goods.indexOf(item);
+      this.editedIndex = this.orders.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
     deleteItemConfirm() {
-      this.goods.splice(this.editedIndex, 1);
+      this.orders.splice(this.editedIndex, 1);
       this.closeDelete();
     },
 
@@ -293,9 +294,9 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.goods[this.editedIndex], this.editedItem);
+        Object.assign(this.orders[this.editedIndex], this.editedItem);
       } else {
-        this.goods.push(this.editedItem);
+        this.orders.push(this.editedItem);
       }
       this.close();
     },
@@ -307,9 +308,9 @@ export default {
       this.categoryMap = strMap;
     },
     addCategoryName() {
-      console.log(this.goods);
-      for (let i = 0; i < this.goods.length; i++) {
-        const good = this.goods[i];
+      console.log(this.orders);
+      for (let i = 0; i < this.orders.length; i++) {
+        const good = this.orders[i];
         good.categoryName = this.categoryMap.get(good.category);
       }
     },
