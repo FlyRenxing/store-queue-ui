@@ -133,10 +133,11 @@
         </v-toolbar>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
+        用户快照，商品快照
         <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
       </template>
       <template v-slot:no-data>
-        <v-btn color="primary" @click="getUserByAll()"> 当前无订单-点此刷新 </v-btn>
+        <v-btn color="primary" @click="getOrdersByAll()"> 当前无订单-点此刷新 </v-btn>
       </template>
     </v-data-table>
   </v-container>
@@ -152,17 +153,15 @@ export default {
     dialogDelete: false,
     headers: [
       {
-        text: "商品ID",
+        text: "订单ID",
         align: "start",
         sortable: true,
-        value: "gid",
+        value: "oid",
       },
-      { text: "商品名称", value: "gname" },
-      { text: "商品价格", value: "price" },
-      { text: "分类", value: "category" },
-      { text: "商品总数", value: "total" },
-      { text: "商品库存", value: "stock" },
-      { text: "商品备注", value: "remarks" },
+      { text: "用户id", value: "uid" },
+      { text: "商品id", value: "gid" },
+      { text: "订单时间", value: "ordetime" },
+      { text: "状态", value: "state" },
       { text: "是否上架", value: "state", sortable: false },
       { text: "操作", value: "actions", sortable: false },
     ],
@@ -211,7 +210,7 @@ export default {
 
   created() {
     this.getOrdersByAll();
-    this.initialize();
+    //this.initialize();
   },
 
   methods: {

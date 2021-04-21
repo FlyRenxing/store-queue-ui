@@ -114,7 +114,7 @@ export default {
   mounted() {},
   methods: {
     openOrder() {
-      this.$router.push({ path: "/order" });
+      this.$router.push({ path: "/myorder" });
     },
     logout() {
       this.$axios

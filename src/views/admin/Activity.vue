@@ -10,10 +10,10 @@
     >
       <!--时间名称替换插槽-->
       <template v-slot:[`item.start`]="{ item }">
-        {{ item.startday+" "+item.starttime }}
+        {{ item.startday + " " + item.starttime }}
       </template>
       <template v-slot:[`item.end`]="{ item }">
-        {{ item.endday+" "+item.endtime }}
+        {{ item.endday + " " + item.endtime }}
       </template>
       <template v-slot:top>
         <v-toolbar flat>
@@ -32,22 +32,34 @@
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on, attrs }">
               <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
-                添加用户
+                创建秒杀
               </v-btn>
             </template>
             <v-card>
               <v-card-title>
                 <span class="headline">{{ formTitle }}</span>
+                <v-spacer></v-spacer>
+                已优惠次数：{{ editedItem.usecount }}
               </v-card-title>
 
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="12">
+                    <v-col cols="12" sm="3">
                       <v-text-field
                           v-model="editedItem.gid"
                           label="商品ID"
+                          readonly
                       ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="9">
+                      <v-autocomplete
+                          v-model="editedItem.gid"
+                          :items="goods"
+                          item-text="gname"
+                          item-value="gid"
+                          label="请输入/选择商品"
+                      ></v-autocomplete>
                     </v-col>
                     <v-col cols="12" sm="6">
                       <v-dialog
@@ -105,6 +117,7 @@
                             v-if="modalTime"
                             v-model="editedItem.starttime"
                             full-width
+                            use-seconds
                             format="24hr"
                         >
                           <v-spacer></v-spacer>
@@ -183,6 +196,7 @@
                             v-if="modalTime2"
                             v-model="editedItem.endtime"
                             full-width
+                            use-seconds
                             format="24hr"
                         >
                           <v-spacer></v-spacer>
@@ -203,32 +217,37 @@
                         </v-time-picker>
                       </v-dialog>
                     </v-col>
-                <v-container>
-                    <v-row v-for="(item,index) in editedItem.data" :key="index">
-                      <v-col cols="12" sm="4">
-                        <v-text-field
-                            v-model="item.top"
-                            label="从(人)"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="4">
-                        <v-text-field
-                            v-model="item.end"
-                            label="到(人)"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="3">
-                        <v-text-field
-                            v-model="item.discount"
-                            label="折"
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="1">
-                        <v-btn @click="editedItem.data.splice(index,1)" icon v-if="index!=editedItem.data.length-1"><v-icon>mdi-minus-circle-outline</v-icon></v-btn>
-                        <v-btn @click="editedItem.data.push({top:item.end+1,end:item.end+2,discount:1});" icon v-if="index==editedItem.data.length-1"><v-icon>mdi-plus-circle-outline</v-icon></v-btn>
-                      </v-col>
-                    </v-row>
-                </v-container>
+                    <v-container>
+                      <v-row v-for="(item,index) in editedItem.data" :key="index">
+                        <v-col cols="12" sm="4">
+                          <v-text-field
+                              v-model="item.top"
+                              label="从(人)"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="4">
+                          <v-text-field
+                              v-model="item.end"
+                              label="到(人)"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="3">
+                          <v-text-field
+                              v-model="item.discount"
+                              label="折"
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" sm="1">
+                          <v-btn @click="editedItem.data.splice(index,1)" icon v-if="index!=editedItem.data.length-1">
+                            <v-icon>mdi-minus-circle-outline</v-icon>
+                          </v-btn>
+                          <v-btn @click="editedItem.data.push({top:item.end+1,end:item.end+2,discount:1});" icon
+                                 v-if="index==editedItem.data.length-1">
+                            <v-icon>mdi-plus-circle-outline</v-icon>
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-container>
                   </v-row>
 
                 </v-container>
@@ -250,7 +269,7 @@
           </v-dialog>
           <v-dialog v-model="dialogDelete" max-width="500px">
             <v-card>
-              <v-card-title class="headline">确定删除该商品？</v-card-title>
+              <v-card-title class="headline">确定删除该秒杀？</v-card-title>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="closeDelete"
@@ -272,7 +291,7 @@
         <v-icon small @click="deleteItem(item)"> mdi-delete</v-icon>
       </template>
       <template v-slot:no-data>
-        <v-btn color="primary" @click="getSeckillByAll"> 当前无用户-点此刷新</v-btn>
+        <v-btn color="primary" @click="getSeckillByAll"> 当前无秒杀-点此刷新</v-btn>
       </template>
     </v-data-table>
     <v-snackbar v-model="snackbar">
@@ -286,10 +305,10 @@ export default {
   name: "Admin-Activity",
   components: {},
   data: () => ({
-    modal:false,
-    modal2:false,
-    modalTime:false,
-    modalTime2:false,
+    modal: false,
+    modal2: false,
+    modalTime: false,
+    modalTime2: false,
     message: "",
     snackbar: false,
     loading: false,
@@ -297,6 +316,7 @@ export default {
     dialog: false,
     addressDialog: false,
     dialogDelete: false,
+    goods:[],
     headers: [
       {
         text: "活动ID",
@@ -308,6 +328,7 @@ export default {
       {text: "商品名", value: "gname"},
       {text: "开始时间", value: "start"},
       {text: "结束时间", value: "end"},
+      {text: "已优惠次数", value: "usecount"},
       {text: "操作", value: "actions", sortable: false},
     ],
     seckill: [],
@@ -315,11 +336,12 @@ export default {
     editedItem: {
       sid: -1,
       startday: "2021-06-01",
-      starttime:"00:00",
+      starttime: "00:00",
       endday: "2021-06-01",
-      endtime:"00:00",
+      endtime: "00:00",
       gid: 0,
       gname: "",
+      usecount: 0,
       data: [
         {top: 0, end: 1000, discount: 0.8},
         {top: 1001, end: 2000, discount: 0.9}
@@ -328,11 +350,12 @@ export default {
     defaultItem: {
       sid: -1,
       startday: "2021-06-01",
-      starttime:"00:00",
+      starttime: "00:00",
       endday: "2021-06-01",
-      endtime:"00:00",
+      endtime: "00:00",
       gid: 0,
       gname: "",
+      usecount: 0,
       data: [
         {top: 0, end: 1000, discount: 0.8},
         {top: 1001, end: 2000, discount: 0.9}
@@ -357,8 +380,9 @@ export default {
   },
 
   created() {
-    //this.getSeckillByAll();
-    this.initialize();
+    this.getSeckillByAll();
+    this.getGoodsByAll();
+    //this.initialize();
     //this.objToMap(this.$store.state.seckill.category);
     //this.addCategoryName();
   },
@@ -366,11 +390,14 @@ export default {
   methods: {
     getSeckillByAll() {
       this.$axios
-          .get("/all")
+          .get("/seckill")
           .then((response) => {
             let that = this;
             if (response.data.code == 200) {
               that.loading = false;
+              for (let i = 0; i < response.data.data.length; i++) {
+                response.data.data[i].data = JSON.parse(response.data.data[i].data)
+              }
               let seckill = response.data.data;
               that.seckill = seckill;
             }
@@ -379,19 +406,19 @@ export default {
             console.log(failResponse);
           });
     },
-    verifyData(){
+    verifyData() {
       for (let i = 0; i < this.editedItem.data.length; i++) {
         //console.log(this.editedItem.data[i].top,this.editedItem.data[i].end);
-        if (this.editedItem.data[i].top>this.editedItem.data[i].end){
-          this.editedItem.data[i].end=this.editedItem.data[i].top+1;
+        if (this.editedItem.data[i].top > this.editedItem.data[i].end) {
+          this.editedItem.data[i].end = this.editedItem.data[i].top + 1;
           alert("错误：活动数据的开始人数需大于等于活动数据的结束人数！已为您修正错误数据！请修改后重新提交");
           return false;
         }
       }
       for (let i = 0; i < this.editedItem.data.length; i++) {
         i++;
-        if (this.editedItem.data[i].top<this.editedItem.data[i-1].end){
-          this.editedItem.data[i].top=this.editedItem.data[i-1].end+1;
+        if (this.editedItem.data[i].top < this.editedItem.data[i - 1].end) {
+          this.editedItem.data[i].top = this.editedItem.data[i - 1].end + 1;
           alert("错误：下一组活动数据的开始人数需大于上一组活动数据的结束人数！已为您修正错误数据！请修改后重新提交");
           return false;
         }
@@ -399,21 +426,22 @@ export default {
       }
     },
     newSeckill() {
-      if(!this.verifyData()){
+      if (!this.verifyData()) {
         return;
       }
       this.loading = true;
       let data = new FormData();
-      data.append("ordertime", this.editedItem.ordertime);
-      data.append("password", this.editedItem.password);
-      data.append("state", this.editedItem.state);
-      data.append("price", this.editedItem.price);
-      data.append("uid", this.editedItem.uid);
+      data.append("sid", this.editedItem.sid);
       data.append("gid", this.editedItem.gid);
-      data.append("logo", this.editedItem.logo);
+      data.append("startday", this.editedItem.startday);
+      data.append("starttime", this.editedItem.starttime);
+      data.append("endday", this.editedItem.endday);
+      data.append("endtime", this.editedItem.endtime);
+      data.append("data", JSON.stringify(this.editedItem.data));
+      data.append("usecount", this.editedItem.usecount);
 
       this.$axios
-          .post("/user/new", data)
+          .post("/seckill/new", data)
           .then((response) => {
             let that = this;
             that.loading = false;
@@ -430,26 +458,26 @@ export default {
           .catch((failResponse) => {
             this.loading = false;
             this.snackbar = true;
-            this.message = "修改失败，网络异常请稍后重试。代码：" + failResponse;
+            this.message = "新建失败，网络异常请稍后重试。代码：" + failResponse;
           });
     },
     editSeckill() {
-      if(!this.verifyData()){
+      if (!this.verifyData()) {
         return;
       }
       this.loading = true;
       let data = new FormData();
-      data.append("uid", this.editedItem.uid);
-      data.append("ordertime", this.editedItem.ordertime);
-      data.append("password", this.editedItem.password);
-      data.append("state", this.editedItem.state);
-      data.append("price", this.editedItem.price);
-      data.append("uid", this.editedItem.uid);
+      data.append("sid", this.editedItem.sid);
       data.append("gid", this.editedItem.gid);
-      data.append("logo", this.editedItem.logo);
+      data.append("startday", this.editedItem.startday);
+      data.append("starttime", this.editedItem.starttime);
+      data.append("endday", this.editedItem.endday);
+      data.append("endtime", this.editedItem.endtime);
+      data.append("data", JSON.stringify(this.editedItem.data));
+      data.append("usecount", this.editedItem.usecount);
 
       this.$axios
-          .post("/user/edit", data)
+          .post("/seckill/edit", data)
           .then((response) => {
             let that = this;
             that.loading = false;
@@ -469,11 +497,11 @@ export default {
             this.message = "修改失败，网络异常请稍后重试。代码：" + failResponse;
           });
     },
-    deleteSeckill(uid) {
+    deleteSeckill(sid) {
       this.loading = true;
 
       this.$axios
-          .get("/user/delete?uid=" + uid)
+          .get("/seckill/"+sid+"/delete")
           .then((response) => {
             let that = this;
             that.loading = false;
@@ -493,14 +521,29 @@ export default {
             this.message = "删除失败，网络异常请稍后重试。代码：" + failResponse;
           });
     },
+    getGoodsByAll() {
+      this.$axios
+          .get("/goods/all")
+          .then((response) => {
+            let that = this;
+            if (response.data.code == 200) {
+              that.loading = false;
+              let goods = response.data.data;
+              that.goods = goods;
+            }
+          })
+          .catch((failResponse) => {
+            console.log(failResponse);
+          });
+    },
     initialize() {
       this.seckill = [
         {
           sid: -2,
           startday: "2021-06-01",
-          starttime:"00:00",
+          starttime: "00:00",
           endday: "2021-06-01",
-          endtime:"12:00",
+          endtime: "12:00",
           gid: 0,
           gname: "薯片",
           data: [
@@ -511,9 +554,9 @@ export default {
         {
           sid: -1,
           startday: "2021-06-01",
-          starttime:"00:00",
+          starttime: "00:00",
           endday: "2021-06-01",
-          endtime:"12:00",
+          endtime: "12:00",
           gid: 2,
           gname: "薯片",
           data: [
@@ -539,7 +582,7 @@ export default {
 
     deleteItemConfirm() {
       //this.seckill.splice(this.editedIndex, 1);
-      this.deleteSeckill(this.editedItem.uid);
+      this.deleteSeckill(this.editedItem.sid);
     },
 
     close() {
@@ -559,17 +602,17 @@ export default {
     },
 
     save() {
-      // if (this.editedIndex == -1) {
-      //   this.newSeckill();
-      // } else {
-      //   this.editSeckill();
-      // }
-      if (this.editedIndex > -1) {
-        Object.assign(this.seckill[this.editedIndex], this.editedItem);
+      if (this.editedIndex == -1) {
+        this.newSeckill();
       } else {
-        this.orders.push(this.editedItem);
+        this.editSeckill();
       }
-      this.close();
+      // if (this.editedIndex > -1) {
+      //   Object.assign(this.seckill[this.editedIndex], this.editedItem);
+      // } else {
+      //   this.orders.push(this.editedItem);
+      // }
+      // this.close();
     },
   },
 };
