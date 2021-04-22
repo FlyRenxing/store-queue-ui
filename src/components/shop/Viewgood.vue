@@ -7,7 +7,19 @@
         </v-card>
       </v-col>
       <v-col cols="12" sm="6">
-        <v-card>
+        <v-card v-if="seckill!=null" color="error">
+
+          <v-card-text>
+            秒杀详情:<br>
+            时间：{{seckill.startday+" "+seckill.starttime+"到"+seckill.endday+" "+seckill.endtime}}<br>
+            规则：
+            <span v-for="(item,index) in seckill.data" :key="index">
+            {{"前"+item.top+"至"+item.end+"名：享受"+item.discount*10+"折"}}<br>
+          </span>
+          </v-card-text>
+
+        </v-card>
+        <v-card style="top: 10px">
           <template slot="progress">
             <v-progress-linear
               color="deep-purple"
@@ -49,6 +61,6 @@
 <script>
 export default {
   name: "ViewGood",
-  props: ["good"],
+  props: ["good","seckill"],
 };
 </script>

@@ -332,6 +332,7 @@ export default {
       {text: "操作", value: "actions", sortable: false},
     ],
     seckill: [],
+    SeckillMap:null,
     editedIndex: -1,
     editedItem: {
       sid: -1,
@@ -343,8 +344,9 @@ export default {
       gname: "",
       usecount: 0,
       data: [
-        {top: 0, end: 1000, discount: 0.8},
-        {top: 1001, end: 2000, discount: 0.9}
+        {top: 0, end: 100, discount: 0.1},
+        {top: 101, end: 500, discount: 0.5},
+        {top: 501, end: 1000, discount: 0.8},
       ]
     },
     defaultItem: {
@@ -357,8 +359,9 @@ export default {
       gname: "",
       usecount: 0,
       data: [
-        {top: 0, end: 1000, discount: 0.8},
-        {top: 1001, end: 2000, discount: 0.9}
+        {top: 0, end: 100, discount: 0.1},
+        {top: 101, end: 500, discount: 0.5},
+        {top: 501, end: 1000, discount: 0.8},
       ]
     },
   }),
@@ -382,6 +385,7 @@ export default {
   created() {
     this.getSeckillByAll();
     this.getGoodsByAll();
+
     //this.initialize();
     //this.objToMap(this.$store.state.seckill.category);
     //this.addCategoryName();
@@ -400,6 +404,8 @@ export default {
               }
               let seckill = response.data.data;
               that.seckill = seckill;
+              that.$store.commit("updateSeckillList",seckill);
+              that.$store.commit("updateSeckillMap",that.objToMap(seckill));
             }
           })
           .catch((failResponse) => {
@@ -613,6 +619,13 @@ export default {
       //   this.orders.push(this.editedItem);
       // }
       // this.close();
+    },
+    objToMap(obj) {
+      let strMap = new Map();
+      for (let k of Object.keys(obj)) {
+        strMap.set(obj[k].gid, obj[k]);
+      }
+      return strMap;
     },
   },
 };

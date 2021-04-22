@@ -98,18 +98,14 @@
         </v-list>
       </v-card>
     </v-container>
-    <Edit
-      :dialog="$store.state.sys.dialog.useredit"
-      :user="$store.state.user"
-    />
   </div>
 </template>
 
 <script>
-import Edit from "../components/auth/Edit.vue";
+
 export default {
   name: "My",
-  components: { Edit },
+  components: {  },
   data: () => ({}),
   mounted() {},
   methods: {

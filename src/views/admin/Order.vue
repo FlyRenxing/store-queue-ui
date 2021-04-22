@@ -307,7 +307,7 @@ export default {
       this.categoryMap = strMap;
     },
     addCategoryName() {
-      console.log(this.orders);
+      //console.log(this.orders);
       for (let i = 0; i < this.orders.length; i++) {
         const good = this.orders[i];
         good.categoryName = this.categoryMap.get(good.category);

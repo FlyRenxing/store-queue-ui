@@ -298,7 +298,8 @@ export default {
           if (response.data.code == 200) {
             that.message = response.data.meg;
             that.snackbar = true;
-            top.location.reload();
+            that.relogin();
+            that.$store.commit("dialog","Useredit")
           } else {
             that.snackbar = true;
             that.message = response.data.meg + "，代码：" + response.data.code;
@@ -323,7 +324,8 @@ export default {
           if (response.data.code == 200) {
             that.message = response.data.meg;
             that.snackbar = true;
-            top.location.reload();
+            that.relogin();
+            that.$store.commit("dialog","Useredit")
           } else {
             that.snackbar = true;
             that.message = response.data.meg + "，代码：" + response.data.code;
@@ -334,6 +336,34 @@ export default {
           this.snackbar = true;
           this.message = "注册失败，网络异常请稍后重试。代码：" + failResponse;
         });
+    },
+    relogin() {
+      this.$axios
+          .get("/user/profile")
+          .then((response) => {
+            let that = this;
+            if (response.data.code == 200) {
+              let user = {
+                birthday: response.data.data.birthday,
+                email: response.data.data.email,
+                logo: response.data.data.logo,
+                password: response.data.data.password,
+                phone: response.data.data.phone,
+                regtime: response.data.data.regtime,
+                uid: response.data.data.uid,
+                uname: response.data.data.uname,
+                type: response.data.data.type,
+              };
+              that.$store.commit("updateUser", user);
+              that.$store.commit("islogin");
+              if (user.type == 1) {
+                that.addAdminRouter();
+              }
+            }
+          })
+          .catch((failResponse) => {
+            console.log(failResponse);
+          });
     },
   },
 };

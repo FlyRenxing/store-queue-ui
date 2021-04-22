@@ -163,23 +163,30 @@
     </v-footer>
     <Login :dialog="$store.state.sys.dialog.login" />
     <Register :dialog="$store.state.sys.dialog.register" />
+    <Edit
+        :dialog="$store.state.sys.dialog.useredit"
+        :user="$store.state.user"
+    />
     <About :dialog="$store.state.sys.dialog.about" />
     <ViewG :dialog="$store.state.sys.dialog.viewgood" />
+
   </v-app>
 </template>
 
 <script>
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
+import Edit from "@/components/auth/Edit";
 import About from "./components/About";
 import ViewG from "./views/ViewG";
 
 export default {
   name: "App",
-  components: { Login, Register, About, ViewG },
+  components: { Login, Register, About, ViewG,Edit },
   mounted() {
     this.$store.commit("isMobile", this.isMobile());
     this.getCategory();
+    this.getSeckillByAll();
     this.islogin();
   },
   computed: {
@@ -308,6 +315,25 @@ export default {
           console.log(failResponse);
         });
     },
+    getSeckillByAll() {
+      this.$axios
+          .get("/seckill")
+          .then((response) => {
+            let that = this;
+            if (response.data.code == 200) {
+              that.loading = false;
+              for (let i = 0; i < response.data.data.length; i++) {
+                response.data.data[i].data = JSON.parse(response.data.data[i].data)
+              }
+              let seckill = response.data.data;
+              that.$store.commit("updateSeckillList",seckill);
+              that.$store.commit("updateSeckillMap",that.seckillToMap(seckill));
+            }
+          })
+          .catch((failResponse) => {
+            console.log(failResponse);
+          });
+    },
     addAdminRouter() {
       this.$router.addRoute({
         path: "/admin/dashboard",
@@ -334,6 +360,13 @@ export default {
         name: "Goods",
         component: () => import("./views/admin/Goods.vue"),
       });
+    },
+    seckillToMap(obj) {
+      let strMap = new Map();
+      for (let k of Object.keys(obj)) {
+        strMap.set(obj[k].gid, obj[k]);
+      }
+      return strMap;
     },
   },
 };
