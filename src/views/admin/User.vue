@@ -2,11 +2,12 @@
   <v-container>
     <h1>用户管理</h1>
     <v-data-table
-      :headers="headers"
-      :items="users"
-      :search="search"
-      sort-by="uid"
-      class="elevation-1"
+        :headers="headers"
+        :items="users"
+        :search="search"
+        sort-by="uid"
+        sort-desc=true
+        class="elevation-1"
     >
       <template v-slot:[`item.type`]="{ item }">
         <v-switch

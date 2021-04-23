@@ -5,7 +5,8 @@
         :headers="headers"
         :items="seckill"
         :search="search"
-        sort-by="uid"
+        sort-by="sid"
+        sort-desc=true
         class="elevation-1"
     >
       <!--时间名称替换插槽-->
