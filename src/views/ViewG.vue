@@ -1,41 +1,47 @@
 <template>
   <v-row justify="center">
     <v-dialog
-      v-model="dialog"
-      :fullscreen="this.$store.state.sys.isMobile"
-      hide-overlay
-      persistent
-      transition="dialog-bottom-transition"
-      width="800"
+        v-model="dialog"
+        :fullscreen="this.$store.state.sys.isMobile"
+        scrollable
+        hide-overlay
+        persistent
+        transition="dialog-bottom-transition"
+        width="800"
     >
-      <v-toolbar dark :color="this.$store.state.sys.color">
-        <v-btn icon v-show="step==2" @click="step--"><v-icon>mdi-arrow-left-thin-circle-outline</v-icon></v-btn>
-        <v-toolbar-title>{{ currentTitle }}</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn icon dark @click="isClose">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-toolbar>
-
-      <v-btn
-        fab
-        dark
-        :color="$store.state.sys.color"
-        @click="isClose()"
-        v-if="$store.state.sys.isMobile"
-        style="
-          width: 52px;
-          z-index: 999;
-          position: fixed !important;
-          left: 16px;
-          bottom: 32px;
-        "
-        ><v-icon>mdi-close</v-icon></v-btn
-      >
       <v-card>
-        <v-window v-model="step">
-          <v-window-item :value="1">
-            <v-card-text>
+        <v-toolbar dark :color="this.$store.state.sys.color">
+          <v-btn icon v-show="step==2" @click="step--">
+            <v-icon>mdi-arrow-left-thin-circle-outline</v-icon>
+          </v-btn>
+          <v-toolbar-title>{{ currentTitle }}</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon dark @click="isClose">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+
+        <!--        <v-btn-->
+        <!--            fab-->
+        <!--            dark-->
+        <!--            :color="$store.state.sys.color"-->
+        <!--            @click="isClose()"-->
+        <!--            v-if="$store.state.sys.isMobile"-->
+        <!--            style="-->
+        <!--          width: 52px;-->
+        <!--          z-index: 999;-->
+        <!--          position: fixed !important;-->
+        <!--          left: 16px;-->
+        <!--          bottom: 32px;-->
+        <!--        "-->
+        <!--        >-->
+        <!--          <v-icon>mdi-close</v-icon>-->
+        <!--        </v-btn-->
+        <!--        >-->
+        <v-card-text>
+          <v-window v-model="step">
+            <v-window-item :value="1">
+
               <v-col
                   :cols="!$store.state.sys.isMobile ? 4 : 6"
                   v-show="loading"
@@ -48,31 +54,48 @@
                   ></v-skeleton-loader>
                 </v-sheet>
               </v-col>
-              <ViewGood v-show="!loading" :good="good" :seckill="seckill" />
-              <v-card-actions
-                ><v-spacer></v-spacer
-                ><v-btn
+              <ViewGood v-show="!loading" :good="good" :seckill="seckill"/>
+
+
+            </v-window-item>
+            <v-window-item :value="2">
+              <CreateOrder :good="good"/>
+            </v-window-item>
+          </v-window>
+        </v-card-text>
+        <v-window v-model="step">
+          <v-window-item :value="1">
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
                   dark
                   :color="$store.state.sys.color"
                   large
                   @click="$store.state.user.uid!=-1?time.remainTime<=0?step++:null:$store.commit('dialog','Login')"
-                  :style="
-                    $store.state.sys.isMobile
-                      ? 'z-index: 999;position: fixed !important;right: 32px;bottom: 32px;'
-                      : ''
-                  "
-                  >
-                <span v-if="time.remainTime>0">倒计时：{{time.hour}}时{{time.minute}}分{{time.second}}秒</span>
-                <span v-if="time.remainTime<=0">立即购买</span>
-              </v-btn
-                ></v-card-actions
+                  style="right: 25px"
               >
-            </v-card-text>
+                <span v-if="time.remainTime>0">倒计时：{{ time.hour }}时{{ time.minute }}分{{ time.second }}秒</span>
+                <span v-if="time.remainTime<=0">立即购买</span>
+              </v-btn>
+            </v-card-actions>
           </v-window-item>
           <v-window-item :value="2">
-            <v-card-text>
-              <CreateOrder :good="good" />
-            </v-card-text>
+            <v-card-actions
+            >
+              <v-spacer></v-spacer
+              >
+              <v-btn
+                  dark
+                  @click="buy(good.gid)"
+                  :loading="loading"
+                  :color="$store.state.sys.color"
+                  large
+                  style="right: 25px"
+              >
+                <v-card-title>￥{{ good.price }}</v-card-title>
+                <span>提交订单</span>
+              </v-btn>
+            </v-card-actions>
           </v-window-item>
         </v-window>
       </v-card>
@@ -86,36 +109,37 @@
 <script>
 import ViewGood from "../components/shop/Viewgood.vue";
 import CreateOrder from "@/components/shop/CreateOrder";
+
 export default {
   name: "ViewG",
-  components: { ViewGood,CreateOrder },
+  components: {ViewGood, CreateOrder},
   props: ["dialog"],
   data: () => ({
     step: 1,
     message: "",
     snackbar: false,
     good: {},
-    seckill:null,
-    loading:true,
-    time:{
-      remainTime:0,
+    seckill: null,
+    loading: true,
+    time: {
+      remainTime: 0,
       hour: 0,
       minute: 0,
       second: 0,
     },
   }),
-  mounted () {
+  mounted() {
 
   },
 
   watch: {
     "$store.state.sys.viewgood_id": function (id) {
-      this.step=1;
-      this.loading=true;
-      this.time.remainTime=0;
+      this.step = 1;
+      this.loading = true;
+      this.time.remainTime = 0;
       this.getGood(id);
       this.getSeckill(id);
-      if (this.seckill!=null) {
+      if (this.seckill != null) {
         this.updateTime();
       }
 
@@ -140,33 +164,33 @@ export default {
     },
     getGood(id) {
       this.$axios
-        .get("/goods/" + id)
-        .then((response) => {
-          let that = this;
-          if (response.data.code == 200) {
-            that.loading=false;
-            let good = response.data.data;
-            that.good = good;
-          }
-        })
-        .catch((failResponse) => {
-          console.log(failResponse);
-        });
+          .get("/goods/" + id)
+          .then((response) => {
+            let that = this;
+            if (response.data.code == 200) {
+              that.loading = false;
+              let good = response.data.data;
+              that.good = good;
+            }
+          })
+          .catch((failResponse) => {
+            console.log(failResponse);
+          });
     },
-    getSeckill(gid){
-      this.seckill=this.$store.state.seckill.map.get(gid);
+    getSeckill(gid) {
+      this.seckill = this.$store.state.seckill.map.get(gid);
     },
-    updateTime(){
-      let start = this.seckill.startday+" "+this.seckill.starttime
-      let date = new Date(start).getTime()-new Date().getTime();
+    updateTime() {
+      let start = this.seckill.startday + " " + this.seckill.starttime
+      let date = new Date(start).getTime() - new Date().getTime();
       //console.log(date)
-      this.time.remainTime=date/1000;
+      this.time.remainTime = date / 1000;
       this.time.hour = Math.floor((this.time.remainTime / 3600))
       this.time.minute = Math.floor((this.time.remainTime / 60) % 60)
-      this.time.second = Math.floor(this.time.remainTime % 60%60)
+      this.time.second = Math.floor(this.time.remainTime % 60 % 60)
       this.countDowm()
     },
-    countDowm () {
+    countDowm() {
       let self = this.time
 
       clearInterval(this.promiseTimer)
@@ -197,8 +221,28 @@ export default {
 
       }, 1000)
     },
-    formatNum (num) {
+    formatNum(num) {
       return num < 10 ? '0' + num : '' + num
+    },
+    buy(gid) {
+      this.$axios
+          .get("/goods/" + gid + "/buy")
+          .then((response) => {
+            let that = this;
+            that.loading = false;
+            if (response.data.code == 200) {
+              that.message = response.data.meg;
+              that.snackbar = true;
+            } else {
+              that.snackbar = true;
+              that.message = response.data.meg + "，代码：" + response.data.code;
+            }
+          })
+          .catch((failResponse) => {
+            this.loading = false;
+            this.snackbar = true;
+            this.message = "购买失败，网络异常请稍后重试。代码：" + failResponse;
+          });
     }
 
   },

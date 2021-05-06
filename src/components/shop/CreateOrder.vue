@@ -20,7 +20,6 @@
             手机号：{{ $store.state.user.phone }}<br>
             邮箱：{{ $store.state.user.email }}<br>
           </v-card-text>
-
         </v-card>
 
       </v-col>
@@ -48,27 +47,7 @@
 
       </v-col>
     </v-row>
-    <v-card-actions
-    >
-      <v-spacer></v-spacer
-      >
-      <v-btn
-          dark
-          @click="buy(good.gid)"
-          :loading="loading"
-          :color="$store.state.sys.color"
-          large
-          :style="
-                    $store.state.sys.isMobile
-                      ? 'z-index: 999;position: fixed !important;right: 32px;bottom: 32px;'
-                      : ''
-                  "
-      >
-        <v-card-title>￥{{ good.price }}</v-card-title>
-        <span>提交订单</span>
-      </v-btn
-      >
-    </v-card-actions>
+
     <v-snackbar v-model="snackbar">
       {{ message }}
     </v-snackbar>
@@ -85,27 +64,6 @@ export default {
     message: "",
     snackbar: false,
   }),
-  methods: {
-    buy(gid) {
-      this.$axios
-          .get("/goods/" + gid + "/buy")
-          .then((response) => {
-            let that = this;
-            that.loading = false;
-            if (response.data.code == 200) {
-              that.message = response.data.meg;
-              that.snackbar = true;
-            } else {
-              that.snackbar = true;
-              that.message = response.data.meg + "，代码：" + response.data.code;
-            }
-          })
-          .catch((failResponse) => {
-            this.loading = false;
-            this.snackbar = true;
-            this.message = "购买失败，网络异常请稍后重试。代码：" + failResponse;
-          });
-    }
-  }
+  methods: {}
 };
 </script>

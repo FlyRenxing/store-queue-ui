@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state: {
         sys: {
-            color: "blue-grey",
+            color: "blue lighten-1",
             isMobile: false,
             name: "商城",
             logo: "",
