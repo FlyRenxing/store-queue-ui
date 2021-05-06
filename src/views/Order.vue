@@ -73,24 +73,33 @@
       <template v-slot:[`item.actions`]="{ item }">
         <!--        <v-btn text @click="openDialogUser(item.index)">用户快照</v-btn>-->
         <!--        <v-btn text>商品快照</v-btn>-->
-        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+        <!--        <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>-->
+        <v-btn :loading="loading" v-if="item.state==0" @click="pay(item)" color="warning">立即付款</v-btn>
+        <v-btn :loading="loading" v-if="item.state!=2" @click="closeOrder(item)" color="error">取消订单
+        </v-btn>
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="getOrdersByAll()"> 当前无订单-点此刷新</v-btn>
       </template>
     </v-data-table>
-
+    <v-snackbar v-model="snackbar">
+      {{ message }}
+    </v-snackbar>
   </v-container>
+
 </template>
 
 <script>
 export default {
-  name: "Admin-Order",
+  name: "User-Order",
   components: {},
   data: () => ({
     search: "",
     dialog: false,
     dialogDelete: false,
+    loading: false,
+    message: "",
+    snackbar: false,
     headers: [
       {
         text: "订单ID",
@@ -149,7 +158,56 @@ export default {
             console.log(failResponse);
           });
     },
-
+    pay(order) {
+      this.$axios
+          .get("/order/" + order.oid + "/pay")
+          .then((response) => {
+            let that = this;
+            if (response.data.code == 200) {
+              that.loading = false;
+              that.message = response.data.meg;
+              that.snackbar = true;
+            } else {
+              that.loading = false;
+              that.message = "失败，错误信息：" + response.data.meg;
+              that.snackbar = true;
+            }
+          })
+          .catch((failResponse) => {
+            let that = this;
+            that.loading = false;
+            that.message = "失败，错误信息：" + failResponse;
+            that.snackbar = true;
+          });
+      this.orders = [];
+      this.getOrdersByAll();
+    },
+    closeOrder(order) {
+      if (confirm("确定取消订单吗？")) {
+        this.$axios
+            .get("/order/" + order.oid + "/close")
+            .then((response) => {
+              let that = this;
+              if (response.data.code == 200) {
+                that.loading = false;
+                that.message = response.data.meg;
+                that.snackbar = true;
+              } else {
+                that.loading = false;
+                that.message = "失败，错误信息：" + response.data.meg;
+                that.snackbar = true;
+              }
+            })
+            .catch((failResponse) => {
+              let that = this;
+              that.loading = false;
+              that.message = "失败，错误信息：" + failResponse;
+              that.snackbar = true;
+            });
+      }
+      this.orders = [];
+      this.getOrdersByAll();
+    },
     initialize() {
       this.orders = [
         {
@@ -295,6 +353,7 @@ export default {
       }
       this.close();
     },
+
     objToMap(obj) {
       let strMap = new Map();
       for (let k of Object.keys(obj)) {
