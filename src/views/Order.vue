@@ -159,54 +159,54 @@ export default {
           });
     },
     pay(order) {
+      this.loading = true;
       this.$axios
           .get("/order/" + order.oid + "/pay")
           .then((response) => {
             let that = this;
             if (response.data.code == 200) {
-              that.loading = false;
               that.message = response.data.meg;
               that.snackbar = true;
             } else {
-              that.loading = false;
               that.message = "失败，错误信息：" + response.data.meg;
               that.snackbar = true;
             }
           })
           .catch((failResponse) => {
             let that = this;
-            that.loading = false;
             that.message = "失败，错误信息：" + failResponse;
             that.snackbar = true;
           });
-      this.orders = [];
-      this.getOrdersByAll();
+      setTimeout(() => {
+        this.getOrdersByAll();
+        this.loading = false;
+      }, 2000);
     },
     closeOrder(order) {
       if (confirm("确定取消订单吗？")) {
+        this.loading = true;
         this.$axios
             .get("/order/" + order.oid + "/close")
             .then((response) => {
               let that = this;
               if (response.data.code == 200) {
-                that.loading = false;
                 that.message = response.data.meg;
                 that.snackbar = true;
               } else {
-                that.loading = false;
                 that.message = "失败，错误信息：" + response.data.meg;
                 that.snackbar = true;
               }
             })
             .catch((failResponse) => {
               let that = this;
-              that.loading = false;
               that.message = "失败，错误信息：" + failResponse;
               that.snackbar = true;
             });
       }
-      this.orders = [];
-      this.getOrdersByAll();
+      setTimeout(() => {
+        this.getOrdersByAll();
+        this.loading = false;
+      }, 2000);
     },
     initialize() {
       this.orders = [
