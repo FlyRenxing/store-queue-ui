@@ -110,7 +110,11 @@ export default {
   mounted() {},
   methods: {
     openOrder() {
-      this.$router.push({ path: "/myorder" });
+      if (this.$store.state.user.uid == -1) {
+        this.$store.commit('dialog', 'Login');
+        return
+      }
+      this.$router.push({path: "/myorder"});
     },
     logout() {
       this.$axios

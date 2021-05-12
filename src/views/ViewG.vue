@@ -225,6 +225,11 @@ export default {
       return num < 10 ? '0' + num : '' + num
     },
     buy(gid) {
+      let end = this.seckill.endday + " " + this.seckill.endtime
+      let isOver = new Date(end) < new Date()
+      if (isOver && !confirm("秒杀已结束，继续购买将按照原价购买。是否继续购买？")) {
+        return
+      }
       this.$axios
           .get("/goods/" + gid + "/buy")
           .then((response) => {
