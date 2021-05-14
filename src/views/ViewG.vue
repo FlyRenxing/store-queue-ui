@@ -159,7 +159,6 @@ export default {
   },
   methods: {
     isClose() {
-
       this.$store.commit("dialog", "Viewgood");
     },
     getGood(id) {

@@ -40,7 +40,7 @@
               <v-card-title>
                 <span class="headline">{{ formTitle }}</span>
                 <v-spacer></v-spacer>
-                已优惠次数：{{ editedItem.usecount }}
+                已使用次数：{{ editedItem.usecount }}
               </v-card-title>
 
               <v-card-text>
@@ -290,6 +290,7 @@
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil</v-icon>
         <v-icon small @click="deleteItem(item)"> mdi-delete</v-icon>
+        <v-btn @click="openList(item.sid)" color="warning">公示名单</v-btn>
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="getSeckillByAll"> 当前无秒杀-点此刷新</v-btn>
@@ -329,7 +330,7 @@ export default {
       {text: "商品名", value: "gname"},
       {text: "开始时间", value: "start"},
       {text: "结束时间", value: "end"},
-      {text: "已优惠次数", value: "usecount"},
+      {text: "已使用次数", value: "usecount"},
       {text: "操作", value: "actions", sortable: false},
     ],
     seckill: [],
@@ -385,7 +386,7 @@ export default {
 
   created() {
     this.getSeckillByAll();
-    this.getGoodsByAll();
+
 
     //this.initialize();
     //this.objToMap(this.$store.state.seckill.category);
@@ -528,20 +529,8 @@ export default {
             this.message = "删除失败，网络异常请稍后重试。代码：" + failResponse;
           });
     },
-    getGoodsByAll() {
-      this.$axios
-          .get("/goods/all")
-          .then((response) => {
-            let that = this;
-            if (response.data.code == 200) {
-              that.loading = false;
-              let goods = response.data.data;
-              that.goods = goods;
-            }
-          })
-          .catch((failResponse) => {
-            console.log(failResponse);
-          });
+    openList(sid) {
+      window.open("/seckill/"+sid+"/seckillOrderList");
     },
     initialize() {
       this.seckill = [
