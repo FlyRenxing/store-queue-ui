@@ -34,12 +34,13 @@
           <v-btn x-small fab :color="$store.state.sys.color" text> ￥{{ good.price }}</v-btn>
           <v-spacer></v-spacer>
           <v-btn
+              v-if="good.gid!=null"
               small
               :color="$store.state.seckill.map.get(good.gid)==null?'success':'error'"
               @click="viewgood(good.gid)">
 
             <v-icon>mdi-basket</v-icon>
-            {{ $store.state.seckill.map.get(good.gid)==null?"立即购买":"秒杀活动" }}
+            {{ $store.state.seckill.map.get(good.gid) == null ? "立即购买" : "秒杀活动" }}
           </v-btn>
         </v-card-actions>
       </v-card>
