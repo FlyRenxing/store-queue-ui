@@ -76,7 +76,7 @@ export default {
   }),
   methods:{
     dialogClose(){
-      console.log("1")
+      //console.log("1")
       this.dialog=false
     }
   }

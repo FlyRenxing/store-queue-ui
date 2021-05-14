@@ -34,7 +34,6 @@
           <v-btn x-small fab :color="$store.state.sys.color" text> ￥{{ good.price }}</v-btn>
           <v-spacer></v-spacer>
           <v-btn
-              v-if="good.gid!=null"
               small
               :color="$store.state.seckill.map.get(good.gid)==null?'success':'error'"
               @click="viewgood(good.gid)">
