@@ -56,7 +56,7 @@ export default new Vuex.Store({
         },
         seckill: {
             list: [],
-            map: null,
+            map: new Map(),
         }
 
     },
