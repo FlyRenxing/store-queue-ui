@@ -99,10 +99,17 @@
           </v-window-item>
         </v-window>
       </v-card>
+      <v-overlay
+          absolute
+          :value="overlay"
+      >
+        正在排队中，请勿关闭本页面。
+      </v-overlay>
     </v-dialog>
     <v-snackbar v-model="snackbar">
       {{ message }}
     </v-snackbar>
+
   </v-row>
 </template>
 
@@ -118,9 +125,11 @@ export default {
     step: 1,
     message: "",
     snackbar: false,
+    overlay: false,
     good: {},
     seckill: null,
     loading: true,
+    orderState: 0,
     time: {
       remainTime: 0,
       hour: 0,
@@ -229,6 +238,9 @@ export default {
       if (isOver && !confirm("秒杀已结束，继续购买将按照原价购买。是否继续购买？")) {
         return
       }
+      this.overlay = true
+      //此处需要初始化订单状态代码！
+      this.orderState = 0
       this.$axios
           .get("/goods/" + gid + "/buy")
           .then((response) => {
@@ -237,9 +249,32 @@ export default {
             if (response.data.code == 200) {
               that.message = response.data.meg;
               that.snackbar = true;
+              let t = window.setInterval(function () {
+                that.getUuidState(response.data.data)
+                switch (that.orderState) {
+                  case 0:
+                    that.message = "正在排队中，请勿刷新本页面";
+                    that.snackbar = true;
+                    break;
+                  case 1:
+                    that.message = "购买成功！请至我的-订单页面查看订单并付款";
+                    that.snackbar = true;
+                    clearInterval(t)
+                    that.overlay = false
+                    break;
+                  case 2:
+                    that.message = "购买失败！库存不足，下次再试试吧~";
+                    that.snackbar = true;
+                    clearInterval(t)
+                    that.overlay = false
+                    break;
+                }
+              }, 2500)
             } else {
+              this.overlay = false;
+              this.loading = false;
+              that.message = "错误，" + response.data.meg + "，代码：" + response.data.code;
               that.snackbar = true;
-              that.message = response.data.meg + "，代码：" + response.data.code;
             }
           })
           .catch((failResponse) => {
@@ -247,6 +282,20 @@ export default {
             this.snackbar = true;
             this.message = "购买失败，网络异常请稍后重试。代码：" + failResponse;
           });
+    },
+    getUuidState(uuid) {
+      let that = this;
+      this.$axios
+          .get("/order/" + uuid + "/getState")
+          .then((response) => {
+            if (response.data.code == 200) {
+              that.orderState = response.data.data;
+            }
+          })
+          .catch((failResponse) => {
+            console.log(failResponse);
+          });
+      //return state
     }
 
   },
