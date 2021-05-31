@@ -233,10 +233,12 @@ export default {
       return num < 10 ? '0' + num : '' + num
     },
     buy(gid) {
-      let end = this.seckill.endday + " " + this.seckill.endtime
-      let isOver = new Date(end) < new Date()
-      if (isOver && !confirm("秒杀已结束，继续购买将按照原价购买。是否继续购买？")) {
-        return
+      if (this.seckill != null) {
+        let end = this.seckill.endday + " " + this.seckill.endtime
+        let isOver = new Date(end) < new Date()
+        if (isOver && !confirm("秒杀已结束，继续购买将按照原价购买。是否继续购买？")) {
+          return
+        }
       }
       this.overlay = true
       //此处需要初始化订单状态代码！
@@ -260,6 +262,7 @@ export default {
                     that.message = "购买成功！请至我的-订单页面查看订单并付款";
                     that.snackbar = true;
                     clearInterval(t)
+                    that.$store.commit("dialog", "Viewgood")
                     that.overlay = false
                     break;
                   case 2:
@@ -269,7 +272,7 @@ export default {
                     that.overlay = false
                     break;
                 }
-              }, 2500)
+              }, 3500)
             } else {
               this.overlay = false;
               this.loading = false;
