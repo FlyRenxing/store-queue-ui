@@ -16,7 +16,6 @@
         </v-btn>
       </v-toolbar>
       <v-card-text>
-        <p class="text-center">活动统计：共计{{ SeckillOrderList.length }}个订单</p>
         <v-simple-table>
           <template v-slot:default>
             <thead>
@@ -38,15 +37,16 @@
                 v-for="(item,index) in SeckillOrderList"
                 :key="index"
             >
-              <td>{{ index + 1 }}</td>
-              <td>{{ item.name }}</td>
-              <td>{{ item.phone }}</td>
-              <td>{{ item.discount }}</td>
+                <td>{{ index + 1 }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.phone }}</td>
+                <td>{{ item.discount }}</td>
             </tr>
             </tbody>
           </template>
         </v-simple-table>
       </v-card-text>
+      <p class="text-center">活动统计：共计{{ SeckillOrderList.length }}个订单。（最多显示前一千笔订单）</p>
     </v-card>
   </v-dialog>
 </template>

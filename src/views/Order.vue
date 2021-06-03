@@ -6,7 +6,7 @@
         :items="orders"
         :search="search"
         sort-by="oid"
-        sort-desc=true
+        :sort-desc=true
         show-expand
         class="elevation-1"
     >

@@ -6,7 +6,7 @@
         :items="seckill"
         :search="search"
         sort-by="sid"
-        sort-desc=true
+        :sort-desc=true
         class="elevation-1"
     >
       <!--时间名称替换插槽-->
@@ -290,7 +290,7 @@
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil</v-icon>
         <v-icon small @click="deleteItem(item)"> mdi-delete</v-icon>
-        <v-btn @click="openList(item.sid)" color="warning">公示名单</v-btn>
+        <v-btn @click="listDialogOpen(item.sid)" color="warning">公示名单</v-btn>
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="getSeckillByAll"> 当前无秒杀-点此刷新</v-btn>
@@ -299,13 +299,19 @@
     <v-snackbar v-model="snackbar">
       {{ message }}
     </v-snackbar>
+    <SeckillOrderList @dialogClose="listDialogClose"
+                      :dialog="listdialog"
+                      :sid="clickSid!=-1?clickSid:null"
+    ></SeckillOrderList>
   </v-container>
 </template>
 
 <script>
+import SeckillOrderList from "@/components/shop/SeckillOrderList";
+
 export default {
   name: "Admin-Activity",
-  components: {},
+  components: {SeckillOrderList},
   data: () => ({
     modal: false,
     modal2: false,
@@ -316,9 +322,11 @@ export default {
     loading: false,
     search: "",
     dialog: false,
+    listdialog: false,
+    clickSid: -1,
     addressDialog: false,
     dialogDelete: false,
-    goods:[],
+    goods: [],
     headers: [
       {
         text: "活动ID",
@@ -334,7 +342,7 @@ export default {
       {text: "操作", value: "actions", sortable: false},
     ],
     seckill: [],
-    SeckillMap:null,
+    SeckillMap: null,
     editedIndex: -1,
     editedItem: {
       sid: -1,
@@ -406,8 +414,8 @@ export default {
               }
               let seckill = response.data.data;
               that.seckill = seckill;
-              that.$store.commit("updateSeckillList",seckill);
-              that.$store.commit("updateSeckillMap",that.objToMap(seckill));
+              that.$store.commit("updateSeckillList", seckill);
+              that.$store.commit("updateSeckillMap", that.objToMap(seckill));
             }
           })
           .catch((failResponse) => {
@@ -509,7 +517,7 @@ export default {
       this.loading = true;
 
       this.$axios
-          .get("/seckill/"+sid+"/delete")
+          .get("/seckill/" + sid + "/delete")
           .then((response) => {
             let that = this;
             that.loading = false;
@@ -529,8 +537,13 @@ export default {
             this.message = "删除失败，网络异常请稍后重试。代码：" + failResponse;
           });
     },
-    openList(sid) {
-      window.open("/seckill/"+sid+"/seckillOrderList");
+    listDialogOpen(sid) {
+      this.clickSid = sid
+      this.listdialog = true
+    },
+    listDialogClose() {
+      //console.log("1")
+      this.listdialog = false
     },
     initialize() {
       this.seckill = [

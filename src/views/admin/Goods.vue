@@ -6,7 +6,7 @@
         :items="goods"
         :search="search"
         sort-by="gid"
-        sort-desc=true
+        :sort-desc=true
         class="elevation-1"
     >
       <!--分类名称替换插槽-->

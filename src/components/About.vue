@@ -16,7 +16,11 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
-        <iframe src="http://login.imzdx.top/#/About" width="100%" height="600"></iframe>
+        <v-card-text align="center">
+          湖南科技职业学院软件学院<br>
+          天霸动霸tua 队<br>
+          荣誉制作
+        </v-card-text>
       </v-card>
     </v-dialog>
   </v-row>

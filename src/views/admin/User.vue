@@ -6,7 +6,7 @@
         :items="users"
         :search="search"
         sort-by="uid"
-        sort-desc=true
+        :sort-desc=true
         class="elevation-1"
     >
       <template v-slot:[`item.type`]="{ item }">
