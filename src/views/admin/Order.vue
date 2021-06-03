@@ -5,8 +5,15 @@
         :headers="headers"
         :items="orders"
         :search="search"
+        :server-items-length="serverItemsLength"
+        @update:options="getOrdersByOptions"
         sort-by="oid"
         :sort-desc=true
+        :footer-props="{
+      showFirstLastPage: true,
+      firstIcon: 'mdi-arrow-collapse-left',
+      lastIcon: 'mdi-arrow-collapse-right'
+    }"
         show-expand
         class="elevation-1"
     >
@@ -91,6 +98,7 @@ export default {
     search: "",
     dialog: false,
     dialogDelete: false,
+    serverItemsLength: 0,
     headers: [
       {
         text: "订单ID",
@@ -100,14 +108,14 @@ export default {
       },
 
       {text: "商品ID", value: "gid"},
-      {text: "商品名称", value: "goods_snapshot.gname"},
+      {text: "商品名称", value: "goods_snapshot.gname", sortable: false},
       {text: "订单时间", value: "ordertime"},
       {text: "折扣", value: "discount"},
       {text: "应付", value: "price"},
       {text: "实付", value: "pay"},
       {text: "用户id", value: "uid"},
-      {text: "用户名", value: "user_snapshot.uname"},
-      {text: "手机号", value: "user_snapshot.phone"},
+      {text: "用户名", value: "user_snapshot.uname", sortable: false},
+      {text: "手机号", value: "user_snapshot.phone", sortable: false},
       {text: "状态", value: "state"},
       {text: '展开快照', value: 'data-table-expand'},
       {text: "操作", value: "actions", sortable: false},
@@ -125,14 +133,54 @@ export default {
   },
 
   created() {
-    this.getOrdersByAll();
+    this.getOrdersCountByAll()
+    //this.getOrdersByAll();
     //this.initialize();
   },
 
   methods: {
+    getOrdersCountByAll() {
+      this.$axios
+          .get("/order/allCount")
+          .then((response) => {
+            let that = this;
+            if (response.data.code == 200) {
+              that.loading = false;
+              that.serverItemsLength = response.data.data
+            }
+          })
+          .catch((failResponse) => {
+            console.log(failResponse);
+          });
+    },
     getOrdersByAll() {
       this.$axios
-          .get("/order/all")
+          .get("/order/all/page?pageNum=1&pageSize=10")
+          .then((response) => {
+            let that = this;
+            if (response.data.code == 200) {
+              that.loading = false;
+              let orders = response.data.data;
+              for (let i = 0; i < response.data.data.length; i++) {
+                response.data.data[i].goods_snapshot = JSON.parse(response.data.data[i].goods_snapshot);
+                response.data.data[i].user_snapshot = JSON.parse(response.data.data[i].user_snapshot);
+              }
+              that.orders = orders;
+            }
+          })
+          .catch((failResponse) => {
+            console.log(failResponse);
+          });
+    },
+    getOrdersByOptions(options) {
+      let sort = ""
+      console.log(options.sortBy)
+      if (options.sortBy.length != 0) {
+        let paixu = options.sortDesc[0] ? "desc" : "asc"
+        sort = "&pageSort=" + options.sortBy[0] + " " + paixu
+      }
+      this.$axios
+          .get("/order/all/page?pageNum=" + options.page + "&pageSize=" + options.itemsPerPage + sort)
           .then((response) => {
             let that = this;
             if (response.data.code == 200) {
