@@ -3,8 +3,8 @@
     <h1>订单管理</h1>
     <v-data-table
         :headers="headers"
+        :loading="loading"
         :items="orders"
-        :search="search"
         :server-items-length="serverItemsLength"
         @update:options="getOrdersByOptions"
         sort-by="oid"
@@ -47,14 +47,7 @@
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>订单列表</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-text-field
-              v-model="search"
-              append-icon="mdi-magnify"
-              label="搜索"
-              single-line
-              hide-details
-          ></v-text-field>
+
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
 
@@ -95,7 +88,7 @@ export default {
   name: "Admin-Order",
   components: {},
   data: () => ({
-    search: "",
+    loading: false,
     dialog: false,
     dialogDelete: false,
     serverItemsLength: 0,
@@ -173,6 +166,7 @@ export default {
           });
     },
     getOrdersByOptions(options) {
+      this.loading = true
       let sort = ""
       console.log(options.sortBy)
       if (options.sortBy.length != 0) {
