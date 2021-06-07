@@ -252,7 +252,7 @@ export default {
               that.message = response.data.meg;
               that.snackbar = true;
               let t = window.setInterval(function () {
-                that.getUuidState(response.data.data)
+                that.getUuidState(that.$store.state.user.uid, that.good.gid, response.data.data)
                 switch (that.orderState) {
                   case 0:
                     that.message = "正在排队中，请勿刷新本页面";
@@ -271,6 +271,11 @@ export default {
                     clearInterval(t)
                     that.overlay = false
                     break;
+                  default:
+                    that.message = "购买失败！服务器错误，下次再试试吧~";
+                    that.snackbar = true;
+                    clearInterval(t)
+                    that.overlay = false
                 }
               }, 3500)
             } else {
@@ -286,10 +291,10 @@ export default {
             this.message = "购买失败，网络异常请稍后重试。代码：" + failResponse;
           });
     },
-    getUuidState(uuid) {
+    getUuidState(uid, gid, time) {
       let that = this;
       this.$axios
-          .get("/order/" + uuid + "/getState")
+          .get("/order/" + uid + gid + time + "/getState")
           .then((response) => {
             if (response.data.code == 200) {
               that.orderState = response.data.data;
