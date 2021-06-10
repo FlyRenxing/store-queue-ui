@@ -9,69 +9,72 @@
               {{ $store.state.user.uname }}
             </v-list-item-title>
             <v-list-item-subtitle>{{
-              $store.state.user.email
-            }}</v-list-item-subtitle>
+                $store.state.user.email
+              }}
+            </v-list-item-subtitle>
             <v-list-item-subtitle
-              >注册时间：{{ $store.state.user.regtime }}</v-list-item-subtitle
+            >注册时间：{{ $store.state.user.regtime }}
+            </v-list-item-subtitle
             >
           </v-list-item-content>
 
           <v-list-item-avatar tile size="62">
             <v-avatar
-              size="62"
-              :color="$store.state.sys.color"
-              @click="logout()"
+                :color="$store.state.sys.color"
+                size="62"
+                @click="changeUserLogo"
             >
               <img
-                :src="$store.state.user.logo"
-                :alt="$store.state.user.uname"
-                v-if="$store.state.user.logo != null"
+                  v-if="$store.state.user.logo != null"
+                  :alt="$store.state.user.uname"
+                  :src="$store.state.user.logo"
               />
               <span
-                class="white--text headline"
-                v-if="$store.state.user.logo == null"
-                >{{ $store.state.user.uname.slice(0, 2) }}</span
+                  v-if="$store.state.user.logo == null"
+                  class="white--text headline"
+              >{{ $store.state.user.uname.slice(0, 2) }}</span
               >
-            </v-avatar></v-list-item-avatar
+            </v-avatar>
+          </v-list-item-avatar
           >
         </v-list-item>
 
         <v-card-actions>
           <div id="nologin" v-if="$store.state.user.uid == -1">
             <v-btn
-              outlined
-              rounded
-              text
-              @click="$store.commit('dialog', 'Login')"
-              >登录
+                outlined
+                rounded
+                text
+                @click="$store.commit('dialog', 'Login')"
+            >登录
             </v-btn>
             <v-btn
-              outlined
-              rounded
-              text
-              @click="$store.commit('dialog', 'Register')"
-              >注册
+                outlined
+                rounded
+                text
+                @click="$store.commit('dialog', 'Register')"
+            >注册
             </v-btn>
           </div>
           <div id="islogin" v-if="$store.state.user.uid != -1">
             <v-btn
-              outlined
-              rounded
-              text
-              @click="$store.commit('dialog', 'Useredit')"
-              >修改资料
+                outlined
+                rounded
+                text
+                @click="$store.commit('dialog', 'Useredit')"
+            >修改资料
             </v-btn>
-            <v-btn outlined rounded text @click="logout()">退出 </v-btn>
+            <v-btn outlined rounded text @click="logout()">退出</v-btn>
           </div>
         </v-card-actions>
       </v-card>
       <v-card
-        style="top: 10px"
-        class="mx-auto"
-        max-width="500"
-        elevation="2"
-        outlined
-        shaped
+          class="mx-auto"
+          elevation="2"
+          max-width="500"
+          outlined
+          shaped
+          style="top: 10px"
       >
         <v-list shaped>
           <v-list-item-group :color="$store.state.sys.color">
@@ -88,9 +91,11 @@
                 <v-icon>mdi-account-key</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title @click="$store.state.sys.isMobile = false">开启管理面板</v-list-item-title
+                <v-list-item-title @click="$store.state.sys.isMobile = false">开启管理面板
+                </v-list-item-title
                 >
-                 <v-list-item-title @click="$store.state.sys.isMobile = false">(手机端默认不显示入口)</v-list-item-title
+                <v-list-item-title @click="$store.state.sys.isMobile = false">(手机端默认不显示入口)
+                </v-list-item-title
                 >
               </v-list-item-content>
             </v-list-item>
@@ -105,9 +110,10 @@
 
 export default {
   name: "My",
-  components: {  },
+  components: {},
   data: () => ({}),
-  mounted() {},
+  mounted() {
+  },
   methods: {
     openOrder() {
       if (this.$store.state.user.uid == -1) {
@@ -118,17 +124,20 @@ export default {
     },
     logout() {
       this.$axios
-        .get("/user/logout")
-        .then((response) => {
-          if (response.data.code == 200) {
-            alert("退出成功");
-            top.location.reload();
-          }
-        })
-        .catch((failResponse) => {
-          console.log(failResponse);
-        });
+          .get("/user/logout")
+          .then((response) => {
+            if (response.data.code == 200) {
+              alert("退出成功");
+              top.location.reload();
+            }
+          })
+          .catch((failResponse) => {
+            console.log(failResponse);
+          });
     },
+    changeUserLogo() {
+
+    }
   },
 };
 </script>
