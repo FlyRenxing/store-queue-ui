@@ -277,7 +277,7 @@ export default {
                     clearInterval(t)
                     that.overlay = false
                 }
-              }, 3500)
+              }, 800)
             } else {
               this.overlay = false;
               this.loading = false;

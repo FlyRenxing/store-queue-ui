@@ -8,7 +8,7 @@ export default new Vuex.Store({
         sys: {
             color: "blue lighten-1",
             isMobile: false,
-            name: "商城",
+            name: "想不出商城",
             logo: "",
             menubutton: true,
             barmenu: [

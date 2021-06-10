@@ -17,9 +17,11 @@
           </v-btn>
         </v-toolbar>
         <v-card-text align="center">
-          湖南科技职业学院软件学院<br>
-          天霸动霸tua 队<br>
-          荣誉制作
+          <span style="font-size: 2em">湖南科技职业学院软件学院<br>
+            天霸动霸tua&nbsp;队<br>
+            成员：张东祥&nbsp;&nbsp;<span style="font-size: 2.5em">刘思铭</span><br>
+            指导老师：戴臻老师<br>
+            荣誉制作</span>
         </v-card-text>
       </v-card>
     </v-dialog>

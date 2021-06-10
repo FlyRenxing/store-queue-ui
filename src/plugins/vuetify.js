@@ -1,13 +1,17 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib/framework';
+import '@mdi/font/css/materialdesignicons.css';
+import zhHans from 'vuetify/es5/locale/zh-Hans'
 
 Vue.use(Vuetify);
-import zhHans from 'vuetify/es5/locale/zh-Hans'
 export default new Vuetify({
     lang: {
-        locales: { zhHans},
+        locales: {zhHans},
         current: 'zhHans',
-      },
+    },
+    icons: {
+        iconfont: 'mdi', // 默认值 - 仅用于展示目的
+    },
     theme: {
         themes: {
             light: {

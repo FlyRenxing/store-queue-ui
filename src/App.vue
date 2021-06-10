@@ -82,19 +82,18 @@
       :color="color"
       dense
       dark
-      :hide-on-scroll="this.$route.path == '/all'"
     >
       <v-app-bar-nav-icon
         @click="menuSwitch()"
         v-if="!$store.state.sys.isMobile"
       ></v-app-bar-nav-icon>
 
-      <v-toolbar-title>{{ $store.state.sys.name }}</v-toolbar-title>
+      <v-toolbar-title>{{ $store.state.sys.name + " - " + $route.meta.title }}</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
       <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
+        <v-icon @click="darkMode">mdi-theme-light-dark</v-icon>
       </v-btn>
 
       <v-btn icon>
@@ -193,15 +192,15 @@ export default {
     color() {
       switch (this.$store.state.sys.navs.value) {
         case 0:
-          return "blue lighten-1";
+          return "blue lighten-2";
         case 1:
-          return "deep-purple lighten-1";
+          return "deep-purple lighten-2";
         case 2:
-          return "deep-orange lighten-1";
+          return "deep-orange lighten-2";
         case 3:
-          return "indigo";
+          return "indigo lighten-2";
         default:
-          return "blue lighten-1";
+          return "blue lighten-2";
       }
     },
   },
@@ -338,26 +337,31 @@ export default {
       this.$router.addRoute({
         path: "/admin/dashboard",
         name: "Dashboard",
+        meta: {title: "后台 - 仪表盘"},
         component: () => import("./views/admin/Dashboard.vue"),
       });
       this.$router.addRoute({
         path: "/admin/order",
         name: "Order",
+        meta: {title: "后台 - 订单管理"},
         component: () => import("./views/admin/Order.vue"),
       });
       this.$router.addRoute({
         path: "/admin/activity",
         name: "Activity",
+        meta: {title: "后台 - 营销活动"},
         component: () => import("./views/admin/Activity.vue"),
       });
       this.$router.addRoute({
         path: "/admin/user",
         name: "User",
+        meta: {title: "后台 - 用户管理"},
         component: () => import("./views/admin/User.vue"),
       });
       this.$router.addRoute({
         path: "/admin/goods",
         name: "Goods",
+        meta: {title: "后台 - 商品管理"},
         component: () => import("./views/admin/Goods.vue"),
       });
     },
@@ -367,6 +371,9 @@ export default {
         strMap.set(obj[k].gid, obj[k]);
       }
       return strMap;
+    },
+    darkMode: function () {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
     },
   },
 };
