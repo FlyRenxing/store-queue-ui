@@ -40,9 +40,7 @@
           >
         </v-col>
       </v-row>
-      <v-row>
-        <v-col> 假装我是个图表=。= </v-col>
-      </v-row>
+
     </div>
   </v-container>
 </template>
