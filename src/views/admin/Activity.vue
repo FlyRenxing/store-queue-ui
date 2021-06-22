@@ -394,7 +394,7 @@ export default {
 
   created() {
     this.getSeckillByAll();
-
+    this.getGoodsByAll();
 
     //this.initialize();
     //this.objToMap(this.$store.state.seckill.category);
@@ -416,6 +416,19 @@ export default {
               that.seckill = seckill;
               that.$store.commit("updateSeckillList", seckill);
               that.$store.commit("updateSeckillMap", that.objToMap(seckill));
+            }
+          })
+          .catch((failResponse) => {
+            console.log(failResponse);
+          });
+    },
+    getGoodsByAll() {
+      this.$axios
+          .get("/goods/all")
+          .then((response) => {
+            let that = this;
+            if (response.data.code == 200) {
+              that.goods = response.data.data;
             }
           })
           .catch((failResponse) => {
