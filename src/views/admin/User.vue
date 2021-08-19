@@ -61,8 +61,8 @@
                     </v-col>
                     <v-col cols="12" sm="12">
                       <v-text-field
-                        v-model="editedItem.password"
-                        label="密码"
+                        v-model="editedItem.new_password"
+                        label="密码（空留则不修改密码）"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="12">
@@ -206,6 +206,7 @@ export default {
       type: 0,
       uname: "",
       uid: 0,
+      new_password:""
     },
     defaultItem: {
       birthday: "2002-06-02",
@@ -263,7 +264,7 @@ export default {
       this.loading = true;
       let data = new FormData();
       data.append("uname", this.editedItem.uname);
-      data.append("password", this.editedItem.password);
+      data.append("password", this.$md5(this.editedItem.password));
       data.append("phone", this.editedItem.phone);
       data.append("email", this.editedItem.email);
       data.append("birthday", this.editedItem.birthday);
@@ -296,7 +297,7 @@ export default {
       let data = new FormData();
       data.append("uid", this.editedItem.uid);
       data.append("uname", this.editedItem.uname);
-      data.append("password", this.editedItem.password);
+      data.append("password", this.editedItem.new_password==undefined?this.editedItem.password:this.$md5(this.editedItem.new_password));
       data.append("phone", this.editedItem.phone);
       data.append("email", this.editedItem.email);
       data.append("birthday", this.editedItem.birthday);

@@ -282,7 +282,7 @@ export default {
               birthday: response.data.data.birthday,
               email: response.data.data.email,
               logo: response.data.data.logo,
-              password: response.data.data.password,
+              password: this.$md5(response.data.data.password),
               phone: response.data.data.phone,
               regtime: response.data.data.regtime,
               uid: response.data.data.uid,

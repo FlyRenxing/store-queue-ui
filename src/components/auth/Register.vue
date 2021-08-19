@@ -203,7 +203,7 @@ export default {
       this.loading = true;
       let data = new FormData();
       data.append("uname", this.user.name);
-      data.append("password", this.user.password);
+      data.append("password", this.$md5(this.user.password));
       data.append("email", this.user.email);
       data.append("phone", this.user.phone);
       data.append("birthday", this.user.birthday);

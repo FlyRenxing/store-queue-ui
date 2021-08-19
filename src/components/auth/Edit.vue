@@ -314,8 +314,8 @@ export default {
     resetpassword_submit() {
       this.loading = true;
       let data = new FormData();
-      data.append("oldPassword", this.resetpassword.oldpassword);
-      data.append("newPassword", this.resetpassword.newpassword);
+      data.append("old_pwd", this.$md5(this.resetpassword.oldpassword));
+      data.append("new_pwd", this.$md5(this.resetpassword.newpassword));
       this.$axios
         .post("/user/editpassword", data)
         .then((response) => {
@@ -347,7 +347,7 @@ export default {
                 birthday: response.data.data.birthday,
                 email: response.data.data.email,
                 logo: response.data.data.logo,
-                password: response.data.data.password,
+                password: this.$md5(response.data.data.password),
                 phone: response.data.data.phone,
                 regtime: response.data.data.regtime,
                 uid: response.data.data.uid,
